@@ -465,8 +465,9 @@
 
   // Custom smooth scroll for in-page anchor links — gentler and more
   // consistent than native CSS smooth-scroll, especially on mobile.
-  const easeInOutCubic = t =>
-    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  // easeOutCubic moves immediately on click, then decelerates — feels
+  // more responsive than an ease-in-out curve at touch speeds.
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
 
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', e => {
@@ -482,13 +483,13 @@
       const distance = targetY - startY;
       if (Math.abs(distance) < 1) return;
 
-      const duration = Math.min(Math.max(Math.abs(distance) * 0.45, 700), 1500);
+      const duration = Math.min(Math.max(Math.abs(distance) * 0.28, 450), 900);
       let startTime = null;
 
       const step = currentTime => {
         if (startTime === null) startTime = currentTime;
         const progress = Math.min((currentTime - startTime) / duration, 1);
-        window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+        window.scrollTo(0, startY + distance * easeOutCubic(progress));
         if (progress < 1) requestAnimationFrame(step);
       };
 
