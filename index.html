@@ -82,6 +82,7 @@
 <style>
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
@@ -99,6 +100,7 @@
     font-family: 'Inter', sans-serif;
     background-color: #FBF9F8;
     overflow-x: hidden;
+    overscroll-behavior-x: none;
   }
   details > summary {
     list-style: none;
@@ -465,9 +467,9 @@
 
   // Custom smooth scroll for in-page anchor links — gentler and more
   // consistent than native CSS smooth-scroll, especially on mobile.
-  // easeOutCubic moves immediately on click, then decelerates — feels
-  // more responsive than an ease-in-out curve at touch speeds.
-  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+  // easeOutQuart moves immediately on click, then decelerates with a
+  // softer landing than cubic — feels responsive at touch speeds.
+  const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
 
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', e => {
@@ -489,7 +491,7 @@
       const step = currentTime => {
         if (startTime === null) startTime = currentTime;
         const progress = Math.min((currentTime - startTime) / duration, 1);
-        window.scrollTo(0, startY + distance * easeOutCubic(progress));
+        window.scrollTo(0, startY + distance * easeOutQuart(progress));
         if (progress < 1) requestAnimationFrame(step);
       };
 
