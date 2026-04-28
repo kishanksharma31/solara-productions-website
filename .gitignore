@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# Design reference / non-site files (excluded from the site repo)
+Rolling Canvas Home Page.png
+Rolling Canvas Home Page 2.png
+Stitch/
+Ideal Customer Profile.md
