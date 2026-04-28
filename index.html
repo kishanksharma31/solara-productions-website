@@ -179,11 +179,11 @@
   </section>
 
   <!-- 4. Enquiry Form (Get In Touch Section) -->
-  <section id="contact" class="flex flex-col md:flex-row-reverse bg-white h-auto scroll-mt-24">
+  <section class="flex flex-col md:flex-row-reverse bg-white h-auto">
     <div class="w-full md:w-1/2 p-8 md:p-16 bg-surface-container-low flex items-center justify-center overflow-hidden">
       <img alt="Hands joined with bangles in cinematic light" class="w-full h-full object-cover aspect-[3/4]" src="public/images/Image%203.webp"/>
     </div>
-    <div class="w-full md:w-1/2 p-12 md:p-24 flex flex-col justify-center">
+    <div id="contact" class="w-full md:w-1/2 p-12 md:p-24 flex flex-col justify-center scroll-mt-24">
       <h2 class="font-serif text-5xl mb-4 italic">Get In Touch</h2>
       <p class="font-body text-sm font-light text-on-surface-variant tracking-wide mb-16">Tell us your vision. The story you want to convey, the feeling you want to capture — and we'll shape your song around it.</p>
       <form id="enquiry-form" class="space-y-12" action="https://api.web3forms.com/submit" method="POST">
@@ -462,6 +462,39 @@
     window.addEventListener('scroll', updateHeader, { passive: true });
     window.addEventListener('resize', updateHeader, { passive: true });
   }
+
+  // Custom smooth scroll for in-page anchor links — gentler and more
+  // consistent than native CSS smooth-scroll, especially on mobile.
+  const easeInOutCubic = t =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.getElementById(href.slice(1));
+      if (!target) return;
+      e.preventDefault();
+
+      const startY = window.pageYOffset;
+      const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+      const targetY = target.getBoundingClientRect().top + startY - offset;
+      const distance = targetY - startY;
+      if (Math.abs(distance) < 1) return;
+
+      const duration = Math.min(Math.max(Math.abs(distance) * 0.45, 700), 1500);
+      let startTime = null;
+
+      const step = currentTime => {
+        if (startTime === null) startTime = currentTime;
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+        if (progress < 1) requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
+    });
+  });
 </script>
 
 </body>
