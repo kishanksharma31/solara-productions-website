@@ -391,6 +391,7 @@ src="https://www.facebook.com/tr?id=1620086419065922&ev=PageView&noscript=1"
 
 <script>
   // Audio card play/pause + progress
+  let sampleViewTracked = false;
   document.querySelectorAll('.audio-card').forEach(card => {
     const audio = card.querySelector('audio');
     const playBtn = card.querySelector('.play-btn');
@@ -411,7 +412,13 @@ src="https://www.facebook.com/tr?id=1620086419065922&ev=PageView&noscript=1"
     card.addEventListener('click', toggle);
     playBtn.addEventListener('click', toggle);
 
-    audio.addEventListener('play', () => { playBtn.textContent = 'pause'; });
+    audio.addEventListener('play', () => {
+      playBtn.textContent = 'pause';
+      if (!sampleViewTracked && typeof fbq === 'function') {
+        fbq('track', 'ViewContent');
+        sampleViewTracked = true;
+      }
+    });
     audio.addEventListener('pause', () => { playBtn.textContent = 'play_arrow'; });
     audio.addEventListener('ended', () => {
       playBtn.textContent = 'play_arrow';
@@ -448,6 +455,7 @@ src="https://www.facebook.com/tr?id=1620086419065922&ev=PageView&noscript=1"
         const result = await response.json().catch(() => ({}));
 
         if (response.ok && result.success) {
+          if (typeof fbq === 'function') fbq('track', 'Lead');
           const thankYou = document.createElement('div');
           thankYou.className = 'form-thanks py-8';
           thankYou.innerHTML = `
